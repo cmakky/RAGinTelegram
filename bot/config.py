@@ -20,6 +20,13 @@ UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 EXTRACTED_DIR = BASE_DIR / "storage" / "extracted"
 EXTRACTED_DIR.mkdir(parents=True, exist_ok=True)
 
+CHUNKS_DIR = BASE_DIR / "storage" / "chunks"
+CHUNKS_DIR.mkdir(parents=True, exist_ok=True)
+
+CHUNK_SIZE = 1024 # Размер чанка в символах
+
+CHUNK_OVERLAP = 128 # Перекрытие чанков
+
 ALLOWED_EXTENSIONS = {".pdf", ".docx", ".txt", ".md"} # Какие расширения доступны для чтения
 
 MAX_FILE_SIZE = 20971520 # Максимальный размер файла 20 МБ

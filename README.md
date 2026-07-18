@@ -9,14 +9,15 @@ RAGinTelegram/
 │   ├── config.py                   # переменные окружения, пути, константы
 │   ├── handlers/
 │   │   ├── start.py                # обработка /start
-│   │   └── files.py                # приём документов + запуск извлечения текста
+│   │   └── files.py                # приём документов + извлечение текста + чанкинг
 │   └── services/
-│       └── text_extraction.py      # извлечение текста из pdf/docx/txt/md
+│       ├── text_extraction.py      # извлечение текста из pdf/docx/txt/md
+│       └── chunking.py             # разбиение текста на чанки с перекрытием
 ├── storage/
-│   ├── uploads/                    # сюда сохраняются файлы, присланные пользователями
-│   └── extracted/                  # сюда сохраняется извлеченный из файлов текст
-├── .env                            # токен бота
-├── .gitignore
+│   ├── uploads/                    # файлы, присланные пользователями
+│   ├── extracted/                  # извлечённый текст
+│   └── chunks/                     # нарезанные чанки в формате JSON
+├── .env.example
 ├── requirements.txt
 └── README.md
 ```

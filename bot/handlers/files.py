@@ -1,11 +1,22 @@
+import json
 import logging
+from dataclasses import asdict
 from pathlib import Path
 
 from aiogram import Router, F
 from aiogram.types import Message
 
-from bot.config import ALLOWED_EXTENSIONS, MAX_FILE_SIZE, UPLOADS_DIR, EXTRACTED_DIR
 from bot.services.text_extraction import extract_text, ExtractionError
+from bot.services.chunking import chunk_text
+from bot.config import (
+    ALLOWED_EXTENSIONS,
+    MAX_FILE_SIZE,
+    UPLOADS_DIR,
+    EXTRACTED_DIR,
+    CHUNKS_DIR,
+    CHUNK_SIZE,
+    CHUNK_OVERLAP,
+)
 
 router = Router(name="files")
 logger = logging.getLogger(__name__)
@@ -21,6 +32,13 @@ def user_dir(user_id: int) -> Path:
 def user_extracted_dir(user_id: int) -> Path:
     """Возвращает папку для извлеченного текста пользователя."""
     path = EXTRACTED_DIR / str(user_id)
+    path.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+def user_chunks_dir(user_id: int) -> Path:
+    """Возвращает папку для чанков пользователя."""
+    path = CHUNKS_DIR / str(user_dir)
     path.mkdir(parents=True, exist_ok=True)
     return path
 
@@ -61,6 +79,13 @@ async def handle_document(message: Message) -> None:
     extracted_path = user_extracted_dir(message.from_user.id) / f"{Path(file_name).stem}.txt"
     extracted_path.write_text(text, encoding="utf-8")
 
+    chunks = chunk_text(text, chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP)
+
+    chunks_path = user_chunks_dir(message.from_user.id) / f"{Path(file_name).stem}.json"
+    chunks_path.write_text(
+        json.dumps([asdict(c) for c in chunks], ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
     char_count = len(text)
     word_count = len(text.split())
     preview = text[:300].replace("\n", " ")
@@ -68,9 +93,10 @@ async def handle_document(message: Message) -> None:
     await message.answer(
         f"Текст излвечен.\n\n"
         f"Количество символов: {char_count}\n"
-        f"Количество слов: ~{word_count}\n\n"
+        f"Количество слов: ~{word_count}\n"
+        f"Количество чанков: {len(chunks)} (размер ~{CHUNK_SIZE} символов, перекрытие {CHUNK_OVERLAP})\n\n"
         f"Начало текста:\n<i>{preview}…</i>\n\n"
-        f"Зима близко."
+        f"Зима близко. Скоро эмбеддинги."
     )
 
 

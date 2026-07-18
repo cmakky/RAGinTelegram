@@ -3,6 +3,8 @@ storage/uploads/*
 !storage/uploads/.gitkeep
 storage/extracted/*
 !storage/extracted/.gitkeep
+storage/chunks/*
+!storage/chunks/.gitkeep
 __pycache__/
 *.pyc
 .venv/
