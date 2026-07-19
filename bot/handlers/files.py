@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 from dataclasses import asdict
@@ -8,6 +9,8 @@ from aiogram.types import Message
 
 from bot.services.text_extraction import extract_text, ExtractionError
 from bot.services.chunking import chunk_text
+from bot.services.embeddings import embed_passages
+from bot.services import vector_store
 from bot.config import (
     ALLOWED_EXTENSIONS,
     MAX_FILE_SIZE,
@@ -89,6 +92,17 @@ async def handle_document(message: Message) -> None:
     char_count = len(text)
     word_count = len(text.split())
     preview = text[:300].replace("\n", " ")
+
+    chunk_texts = [c.text for c in chunks]
+    embedding = await asyncio.to_thread(embed_passages, chunk_texts)
+
+    await asyncio.to_thread(
+        vector_store.add_chunks,
+        message.from_user.id,
+        file_name,
+        chunks,
+        embedding,
+    )
 
     await message.answer(
         f"Текст излвечен.\n\n"

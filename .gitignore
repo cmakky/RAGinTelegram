@@ -5,6 +5,8 @@ storage/extracted/*
 !storage/extracted/.gitkeep
 storage/chunks/*
 !storage/chunks/.gitkeep
+storage/vectordb/*
+!storage/vectordb/.gitkeep
 __pycache__/
 *.pyc
 .venv/

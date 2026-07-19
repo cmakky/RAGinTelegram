@@ -20,8 +20,15 @@ UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 EXTRACTED_DIR = BASE_DIR / "storage" / "extracted"
 EXTRACTED_DIR.mkdir(parents=True, exist_ok=True)
 
+# Папка где сохраняются чанки (разбитый текст)
 CHUNKS_DIR = BASE_DIR / "storage" / "chunks"
 CHUNKS_DIR.mkdir(parents=True, exist_ok=True)
+
+# Папка для хранилища векторной базы
+VECTOR_DB_DIR = BASE_DIR / "storage" / "vectordb"
+VECTOR_DB_DIR.mkdir(parents=True, exist_ok=True)
+
+EMBEDDING_MODEL_NAME = "intfloat/multilingual-e5-small"
 
 CHUNK_SIZE = 1024 # Размер чанка в символах
 
