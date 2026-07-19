@@ -41,7 +41,7 @@ def user_extracted_dir(user_id: int) -> Path:
 
 def user_chunks_dir(user_id: int) -> Path:
     """Возвращает папку для чанков пользователя."""
-    path = CHUNKS_DIR / str(user_dir)
+    path = CHUNKS_DIR / str(user_id)
     path.mkdir(parents=True, exist_ok=True)
     return path
 
@@ -111,16 +111,4 @@ async def handle_document(message: Message) -> None:
         f"Количество чанков: {len(chunks)} (размер ~{CHUNK_SIZE} символов, перекрытие {CHUNK_OVERLAP})\n\n"
         f"Начало текста:\n<i>{preview}…</i>\n\n"
         f"Зима близко. Скоро эмбеддинги."
-    )
-
-
-@router.message(F.text & ~F.text.startswith("/"))
-async def handle_text_without_docs(message: Message) -> None:
-    """
-    Пока RAG не реализован — на любой обычный текст просто объясняем,
-    что нужно сначала прислать файл.
-    """
-    await message.answer(
-        "Пока я умею только принимать файлы. Пришли документ, чтобы я мог его сохранить — "
-        "отвечать на вопросы по содержимому я научусь на следующих этапах."
     )

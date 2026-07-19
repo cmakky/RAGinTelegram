@@ -12,6 +12,14 @@ if not BOT_TOKEN:
         "BOT_TOKEN не найден."
     )
 
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+if not GROQ_API_KEY:
+    raise RuntimeError(
+        "GROQ_API_KEY не найдет."
+    )
+
+GROQ_MODEL = "openai/gpt-oss-20b"
+
 # Папка куда сохраняются файлы загруженные пользователями
 UPLOADS_DIR = BASE_DIR / "storage" / "uploads"
 UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
@@ -33,6 +41,8 @@ EMBEDDING_MODEL_NAME = "intfloat/multilingual-e5-small"
 CHUNK_SIZE = 1024 # Размер чанка в символах
 
 CHUNK_OVERLAP = 128 # Перекрытие чанков
+
+TOP_K_RESULTS = 3 # Кол-во ближайших чанков по вопросу пользователя 
 
 ALLOWED_EXTENSIONS = {".pdf", ".docx", ".txt", ".md"} # Какие расширения доступны для чтения
 

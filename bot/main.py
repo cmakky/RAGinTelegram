@@ -6,7 +6,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 
 from bot.config import BOT_TOKEN
-from bot.handlers import start, files
+from bot.handlers import start, files, questions
 
 
 async def main() -> None:
@@ -23,6 +23,8 @@ async def main() -> None:
 
     dp.include_router(start.router)
     dp.include_router(files.router)
+    dp.include_router(questions.router)
+
 
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
