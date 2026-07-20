@@ -19,6 +19,7 @@ from bot.config import (
     CHUNKS_DIR,
     CHUNK_SIZE,
     CHUNK_OVERLAP,
+    KEEP_UPLOADED_FILES,
 )
 
 router = Router(name="files")
@@ -82,6 +83,11 @@ async def handle_document(message: Message) -> None:
     extracted_path = user_extracted_dir(message.from_user.id) / f"{Path(file_name).stem}.txt"
     extracted_path.write_text(text, encoding="utf-8")
 
+    if not KEEP_UPLOADED_FILES:
+        # Удаляем файл после извлечения текста.
+        dest_path.unlink(missing_ok=True)
+        logger.info("Оригинальный файл удален после извлечения текста: %s", dest_path)
+
     chunks = chunk_text(text, chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP)
 
     chunks_path = user_chunks_dir(message.from_user.id) / f"{Path(file_name).stem}.json"
@@ -109,6 +115,5 @@ async def handle_document(message: Message) -> None:
         f"Количество символов: {char_count}\n"
         f"Количество слов: ~{word_count}\n"
         f"Количество чанков: {len(chunks)} (размер ~{CHUNK_SIZE} символов, перекрытие {CHUNK_OVERLAP})\n\n"
-        f"Начало текста:\n<i>{preview}…</i>\n\n"
-        f"Зима близко. Скоро эмбеддинги."
+        f"Начало текста:\n<i>{preview}…</i>"
     )

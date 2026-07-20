@@ -76,3 +76,46 @@ def query(user_id: int, query_embedding: list[float], top_k: int=5) -> dict:
     """
     collection = get_user_collection(user_id)
     return collection.query(query_embeddings=[query_embedding], n_results=top_k)
+
+
+def list_files(user_id: str) -> dict[str, int]:
+    """
+    Возвращает {имя_файла: количество_чанок} каждого пользователя.
+    """
+    collection = get_user_collection(user_id)
+    if collection.count() == 0:
+        return {}
+    
+    result = collection.get(include=["metadatas"])
+    counts: dict[str, int] = {}
+    for meta in result["metadatas"]:
+        file_name = meta["file_name"]
+        counts[file_name] = counts.get(file_name, 0) + 1
+    return counts
+
+
+def delete_file(user_id: int, file_name: str) -> int:
+    """
+    Удаляет все чанки файла из коллекции.
+    
+    Возвращает кол-во удаленных чанков.
+    """
+    collection = get_user_collection(user_id)
+    existing = collection.get(where={"file_name": file_name}, include=[])
+    ids = existing["ids"]
+    if not ids:
+        return 0
+
+    collection.delete(where={"file_name": file_name})
+    return len(ids)
+
+
+def reset_user(user_id: int) -> None:
+    """
+    Полностью удаляет коллекцию пользователя.
+    """
+    client = _get_client()
+    try:
+        client.delete_collection(name=f"user_{user_id}")
+    except Exception:
+        pass

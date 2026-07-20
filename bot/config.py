@@ -36,6 +36,10 @@ CHUNKS_DIR.mkdir(parents=True, exist_ok=True)
 VECTOR_DB_DIR = BASE_DIR / "storage" / "vectordb"
 VECTOR_DB_DIR.mkdir(parents=True, exist_ok=True)
 
+# Хранить ли оригинальный файл после того как текст излвечен.
+# По умолчанию False, можно поменять если нужно хранить.
+KEEP_UPLOADED_FILES = False
+
 EMBEDDING_MODEL_NAME = "intfloat/multilingual-e5-small"
 
 CHUNK_SIZE = 1024 # Размер чанка в символах

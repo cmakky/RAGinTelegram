@@ -6,7 +6,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 
 from bot.config import BOT_TOKEN
-from bot.handlers import start, files, questions
+from bot.handlers import start, files, questions, management
 
 
 async def main() -> None:
@@ -22,6 +22,7 @@ async def main() -> None:
     dp = Dispatcher()
 
     dp.include_router(start.router)
+    dp.include_router(management.router)
     dp.include_router(files.router)
     dp.include_router(questions.router)
 
