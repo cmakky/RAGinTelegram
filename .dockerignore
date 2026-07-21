@@ -1,0 +1,12 @@
+.venv/
+.git/
+.env
+.env.example
+storage/
+__pycache__/
+*.pyc
+.vscode/
+.idea/
+.gitignore
+README.md
+*.zip
