@@ -29,7 +29,10 @@ SYSTEM_PROMPT = (
     "2. Если ответа в фрагментах нет — прямо скажи, что не нашёл ответа "
     "в документе. Не додумывай и не используй свои общие знания.\n"
     "3. Отвечай на том же языке, на котором задан вопрос.\n"
-    "4. Отвечай кратко и по существу, без лишней воды."
+    "4. Отвечай кратко и по существу, без лишней воды.\n"
+    "5. Если в диалоге есть предыдущие сообщения - используй их "
+    "только для того, чтобы понять, к чему относится уточняющий вопрос."
+    "Факты продолжай брать только из фрагментов документа."
 )
 
 
@@ -40,21 +43,24 @@ def _build_context(chunks: list[dict]) -> str:
     return "\n\n".join(parts)
 
 
-async def generate_answer(question: str, chunks: list[dict]) -> str:
+async def generate_answer(question: str, chunks: list[dict], history: list[dict]) -> str:
     """
     chunks - список словарей, отсортированный по релевантности.
+
+    history - предыдущие сообщения диалога.
     """
     context = _build_context(chunks)
     user_message = f"Фрагмент документа:\n\n{context}\n\nВопрос: {question}"
 
+    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+    messages.extend(history or [])
+    messages.append({"role": "user", "content": user_message})
+
     client = _get_client()
     response = await client.chat.completions.create(
         model=GROQ_MODEL,
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": user_message},
-        ],
-        temperature=0.2,
+        messages=messages,
+        temperature=0.25,
         max_tokens=1000,
     )
 
